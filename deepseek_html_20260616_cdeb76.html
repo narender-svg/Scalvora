@@ -1,0 +1,2176 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Scalvora — Publisher Acquisition Engine</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;14..32,400;14..32,500;14..32,600;14..32,700;14..32,800;14..32,900&display=swap" rel="stylesheet" />
+  <style>
+    /* ── Reset & base ── */
+    *,
+    *::before,
+    *::after {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    :root {
+      --black: #0a0a0a;
+      --white: #ffffff;
+      --gray-50: #f9f9f9;
+      --gray-100: #f0f0f0;
+      --gray-200: #e0e0e0;
+      --gray-300: #c0c0c0;
+      --gray-400: #909090;
+      --gray-500: #606060;
+      --gray-600: #404040;
+      --gray-700: #2a2a2a;
+      --gray-800: #1a1a1a;
+      --gray-900: #0f0f0f;
+      --blue: #2563eb;
+      --blue-light: #3b82f6;
+      --blue-dim: rgba(37, 99, 235, 0.12);
+      --blue-glow: rgba(37, 99, 235, 0.25);
+      --dark-card: #0f1117;
+      --dark-card-2: #13161f;
+      --radius: 14px;
+      --radius-sm: 8px;
+      --radius-lg: 20px;
+      --shadow-card: 0 8px 32px rgba(0, 0, 0, 0.06), 0 1px 6px rgba(0, 0, 0, 0.04);
+      --shadow-lg: 0 12px 48px rgba(0, 0, 0, 0.10);
+    }
+
+    html {
+      scroll-behavior: smooth;
+    }
+
+    body {
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+      background: var(--white);
+      color: var(--black);
+      font-size: 16px;
+      line-height: 1.6;
+      -webkit-font-smoothing: antialiased;
+      overflow-x: hidden;
+    }
+
+    .container {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 0 24px;
+    }
+
+    /* ── Typography ── */
+    .label-sm {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 11px;
+      font-weight: 600;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--gray-400);
+      margin-bottom: 16px;
+    }
+    .label-sm .dot {
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background: var(--blue);
+      flex-shrink: 0;
+    }
+
+    .heading-xl {
+      font-size: clamp(38px, 6vw, 68px);
+      font-weight: 900;
+      line-height: 1.04;
+      letter-spacing: -0.03em;
+      color: var(--black);
+    }
+    .heading-xl .dim {
+      color: var(--gray-400);
+    }
+    .heading-xl .blue {
+      color: var(--blue);
+    }
+
+    .heading-lg {
+      font-size: clamp(30px, 4.5vw, 52px);
+      font-weight: 900;
+      line-height: 1.08;
+      letter-spacing: -0.03em;
+      color: var(--black);
+    }
+
+    .sub-text {
+      font-size: 17px;
+      color: var(--gray-500);
+      line-height: 1.7;
+      max-width: 560px;
+    }
+
+    /* ── Buttons ── */
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 14px 28px;
+      border-radius: 999px;
+      font-weight: 600;
+      font-size: 15px;
+      text-decoration: none;
+      cursor: pointer;
+      border: none;
+      transition: all 0.25s ease;
+      font-family: inherit;
+    }
+    .btn-primary {
+      background: var(--black);
+      color: var(--white);
+      box-shadow: 0 2px 12px rgba(0, 0, 0, 0.12);
+    }
+    .btn-primary:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.18);
+      background: #1a1a1a;
+    }
+    .btn-outline {
+      background: transparent;
+      color: var(--black);
+      border: 1.5px solid var(--gray-200);
+    }
+    .btn-outline:hover {
+      background: var(--gray-50);
+      border-color: var(--gray-300);
+    }
+    .btn-white {
+      background: var(--white);
+      color: var(--black);
+      box-shadow: 0 2px 12px rgba(0, 0, 0, 0.08);
+    }
+    .btn-white:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
+    }
+
+    /* ── Navbar ── */
+    nav {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      z-index: 1000;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 40px;
+      height: 72px;
+      background: rgba(255, 255, 255, 0.82);
+      backdrop-filter: blur(14px);
+      -webkit-backdrop-filter: blur(14px);
+      border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+      transition: border-color 0.2s;
+    }
+    nav.scrolled {
+      border-bottom-color: var(--gray-200);
+      box-shadow: 0 1px 8px rgba(0, 0, 0, 0.04);
+    }
+
+    .nav-logo {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-size: 15px;
+      font-weight: 800;
+      letter-spacing: 0.06em;
+      text-decoration: none;
+      color: var(--black);
+    }
+    .nav-logo-icon {
+      width: 30px;
+      height: 30px;
+      background: var(--black);
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: white;
+      font-size: 12px;
+      font-weight: 900;
+    }
+
+    .nav-links {
+      display: flex;
+      align-items: center;
+      gap: 32px;
+      list-style: none;
+    }
+    .nav-links a {
+      text-decoration: none;
+      color: var(--gray-500);
+      font-size: 14px;
+      font-weight: 500;
+      transition: color 0.2s;
+    }
+    .nav-links a:hover {
+      color: var(--black);
+    }
+    .nav-cta {
+      background: var(--black);
+      color: var(--white) !important;
+      padding: 10px 24px;
+      border-radius: 999px;
+      font-size: 14px !important;
+      font-weight: 600 !important;
+      transition: opacity 0.2s, transform 0.2s;
+    }
+    .nav-cta:hover {
+      opacity: 0.85;
+      transform: translateY(-1px);
+    }
+
+    .mobile-toggle {
+      display: none;
+      background: none;
+      border: none;
+      cursor: pointer;
+      padding: 6px;
+      color: var(--black);
+    }
+
+    /* ── Mobile Menu Overlay ── */
+    .mobile-menu-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0, 0, 0, 0.4);
+      backdrop-filter: blur(4px);
+      z-index: 999;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.3s ease;
+    }
+    .mobile-menu-overlay.open {
+      opacity: 1;
+      pointer-events: all;
+    }
+    .mobile-menu {
+      position: fixed;
+      top: 0;
+      right: -300px;
+      width: 280px;
+      height: 100%;
+      background: var(--white);
+      z-index: 1001;
+      padding: 80px 32px 32px;
+      transition: right 0.35s cubic-bezier(0.22, 1, 0.36, 1);
+      box-shadow: -8px 0 40px rgba(0, 0, 0, 0.08);
+      display: flex;
+      flex-direction: column;
+      gap: 24px;
+    }
+    .mobile-menu.open {
+      right: 0;
+    }
+    .mobile-menu .close-btn {
+      position: absolute;
+      top: 20px;
+      right: 20px;
+      background: none;
+      border: none;
+      font-size: 24px;
+      cursor: pointer;
+      color: var(--gray-500);
+    }
+    .mobile-menu a {
+      font-size: 18px;
+      font-weight: 500;
+      color: var(--black);
+      text-decoration: none;
+      padding: 8px 0;
+      border-bottom: 1px solid var(--gray-100);
+      transition: color 0.2s;
+    }
+    .mobile-menu a:hover {
+      color: var(--blue);
+    }
+    .mobile-menu .nav-cta-mobile {
+      margin-top: 12px;
+      background: var(--black);
+      color: var(--white);
+      padding: 14px 24px;
+      border-radius: 999px;
+      text-align: center;
+      font-weight: 600;
+      text-decoration: none;
+      border: none;
+      font-size: 15px;
+    }
+
+    /* ── Hero ── */
+    .hero {
+      padding: 140px 0 80px;
+      position: relative;
+      overflow: hidden;
+    }
+    .hero .grid-bg {
+      position: absolute;
+      inset: 0;
+      background-image: linear-gradient(to right, rgba(0, 0, 0, 0.04) 1px, transparent 1px),
+        linear-gradient(to bottom, rgba(0, 0, 0, 0.04) 1px, transparent 1px);
+      background-size: 48px 48px;
+      pointer-events: none;
+    }
+    .hero-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 60px;
+      align-items: center;
+      position: relative;
+      z-index: 1;
+    }
+    .hero-values {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px 24px;
+      margin: 16px 0 32px;
+    }
+    .hero-values span {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 14px;
+      color: var(--gray-600);
+      font-weight: 500;
+    }
+    .hero-values svg {
+      color: var(--blue);
+      flex-shrink: 0;
+    }
+
+    /* ── Hero Card ── */
+    .hero-card {
+      background: var(--white);
+      border: 1px solid var(--gray-200);
+      border-radius: var(--radius-lg);
+      padding: 28px;
+      box-shadow: var(--shadow-card);
+      transition: transform 0.25s, box-shadow 0.25s;
+    }
+    .hero-card:hover {
+      transform: translateY(-4px);
+      box-shadow: var(--shadow-lg);
+    }
+    .hero-card-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 20px;
+      padding-bottom: 16px;
+      border-bottom: 1px solid var(--gray-100);
+    }
+    .hero-card-title {
+      font-size: 12px;
+      font-family: 'SF Mono', 'Fira Code', monospace;
+      color: var(--gray-400);
+      letter-spacing: 0.02em;
+    }
+    .hero-card-status {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 11px;
+      color: #22c55e;
+      font-weight: 600;
+    }
+    .status-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: #22c55e;
+      animation: pulse-dot 2s ease-in-out infinite;
+    }
+    @keyframes pulse-dot {
+      0%,
+      100% {
+        opacity: 1;
+        transform: scale(1);
+      }
+      50% {
+        opacity: 0.4;
+        transform: scale(0.8);
+      }
+    }
+
+    .pipeline-tabs {
+      display: flex;
+      gap: 0;
+      margin-bottom: 20px;
+      border-bottom: 1px solid var(--gray-100);
+      overflow-x: auto;
+      -webkit-overflow-scrolling: touch;
+    }
+    .pipeline-tab {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 4px;
+      padding: 8px 12px 12px;
+      flex: 1;
+      min-width: 64px;
+      cursor: pointer;
+      border-bottom: 2px solid transparent;
+      transition: border-color 0.2s, opacity 0.2s;
+      opacity: 0.6;
+    }
+    .pipeline-tab.active {
+      border-bottom-color: var(--blue);
+      opacity: 1;
+    }
+    .pipeline-tab.active .tab-label {
+      color: var(--black);
+      font-weight: 600;
+    }
+    .tab-icon {
+      width: 32px;
+      height: 32px;
+      border-radius: var(--radius-sm);
+      border: 1px solid var(--gray-200);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 14px;
+      background: var(--white);
+      color: var(--gray-600);
+    }
+    .tab-label {
+      font-size: 10px;
+      color: var(--gray-400);
+      font-weight: 500;
+      white-space: nowrap;
+    }
+
+    .publisher-rows {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+    .publisher-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 12px 14px;
+      background: var(--gray-50);
+      border-radius: var(--radius-sm);
+      border: 1px solid var(--gray-100);
+      transition: background 0.2s, border-color 0.2s;
+      cursor: default;
+    }
+    .publisher-row:hover {
+      background: var(--gray-100);
+      border-color: var(--gray-300);
+    }
+    .pub-left {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      overflow: hidden;
+    }
+    .pub-globe {
+      flex-shrink: 0;
+      width: 24px;
+      height: 24px;
+      border-radius: 50%;
+      border: 1.5px solid var(--blue-light);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--blue);
+      font-size: 12px;
+    }
+    .pub-name {
+      font-size: 13px;
+      font-weight: 500;
+      color: var(--gray-800);
+      font-family: 'SF Mono', 'Fira Code', monospace;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+    .pub-right {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      flex-shrink: 0;
+    }
+    .pub-dr {
+      font-size: 12px;
+      color: var(--gray-400);
+      font-weight: 500;
+    }
+    .pub-badge {
+      font-size: 10px;
+      font-weight: 700;
+      color: #22c55e;
+      background: rgba(34, 197, 94, 0.12);
+      padding: 2px 10px;
+      border-radius: 999px;
+      letter-spacing: 0.03em;
+      text-transform: uppercase;
+    }
+    .hero-card-footer {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-top: 16px;
+      padding-top: 16px;
+      border-top: 1px solid var(--gray-100);
+      font-size: 12px;
+      color: var(--gray-400);
+      flex-wrap: wrap;
+      gap: 6px;
+    }
+    .footer-stat {
+      font-weight: 600;
+      color: var(--gray-700);
+    }
+
+    /* ── Proof Bar ── */
+    .proof-bar {
+      background: var(--gray-50);
+      border-top: 1px solid var(--gray-100);
+      border-bottom: 1px solid var(--gray-100);
+      padding: 16px 24px;
+    }
+    .proof-inner {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: center;
+      gap: 0;
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+    .proof-item {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 8px 32px;
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--gray-700);
+      border-right: 1px solid var(--gray-200);
+    }
+    .proof-item:last-child {
+      border-right: none;
+    }
+    .proof-item span {
+      font-weight: 400;
+      color: var(--gray-400);
+    }
+    .proof-item svg {
+      flex-shrink: 0;
+    }
+
+    /* ── Sections ── */
+    section {
+      padding: 100px 0;
+    }
+    .section-dark {
+      background: var(--gray-50);
+    }
+
+    /* ── Problem / Bottleneck ── */
+    .problem-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 24px;
+      margin-top: 48px;
+    }
+    .problem-card {
+      border-radius: var(--radius-lg);
+      padding: 32px;
+      border: 1px solid var(--gray-200);
+      background: var(--white);
+      transition: transform 0.25s, box-shadow 0.25s;
+    }
+    .problem-card:hover {
+      transform: translateY(-2px);
+      box-shadow: var(--shadow-card);
+    }
+    .problem-card.dark {
+      background: var(--dark-card);
+      border-color: transparent;
+    }
+    .card-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 20px;
+      padding-bottom: 14px;
+      border-bottom: 1px solid var(--gray-100);
+    }
+    .card-header.dark-border {
+      border-bottom-color: rgba(255, 255, 255, 0.06);
+    }
+    .card-label {
+      font-size: 10px;
+      font-weight: 600;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--gray-400);
+    }
+    .card-label.dark {
+      color: rgba(255, 255, 255, 0.4);
+    }
+
+    .workflow-rows {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+    .workflow-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 12px 16px;
+      border-radius: var(--radius-sm);
+      border: 1px solid var(--gray-100);
+      background: var(--gray-50);
+      font-size: 14px;
+      color: var(--gray-700);
+      font-weight: 500;
+    }
+    .workflow-row .tag {
+      font-size: 10px;
+      color: var(--gray-400);
+      font-weight: 500;
+      letter-spacing: 0.05em;
+    }
+    .workflow-row .dot {
+      margin-right: 10px;
+      font-size: 8px;
+      color: var(--gray-300);
+    }
+
+    .scalvora-flow {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+    .flow-step {
+      border-radius: var(--radius-sm);
+      border: 1px solid rgba(255, 255, 255, 0.06);
+      background: rgba(255, 255, 255, 0.03);
+      padding: 14px 18px;
+      font-size: 14px;
+      font-weight: 500;
+      color: rgba(255, 255, 255, 0.7);
+    }
+    .flow-step.you span {
+      font-weight: 600;
+      color: rgba(255, 255, 255, 0.4);
+    }
+    .flow-step.you span strong {
+      color: rgba(255, 255, 255, 0.8);
+    }
+    .flow-step.scal span {
+      font-weight: 600;
+      color: rgba(255, 255, 255, 0.4);
+    }
+    .flow-step.scal span strong {
+      color: rgba(255, 255, 255, 0.8);
+    }
+    .flow-step.result {
+      border-color: rgba(37, 99, 235, 0.3);
+      background: rgba(37, 99, 235, 0.08);
+      font-weight: 600;
+      color: rgba(255, 255, 255, 0.9);
+    }
+    .flow-footer {
+      font-size: 12px;
+      color: rgba(255, 255, 255, 0.3);
+      margin-top: 14px;
+      line-height: 1.6;
+    }
+
+    /* ── What We Do ── */
+    .whatwedo-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 80px;
+      align-items: start;
+    }
+    .industry-tags {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin: 20px 0 16px;
+    }
+    .industry-tag {
+      padding: 6px 16px;
+      border-radius: 999px;
+      border: 1.5px solid var(--gray-200);
+      font-size: 13px;
+      font-weight: 500;
+      color: var(--gray-700);
+      background: var(--white);
+      transition: all 0.2s;
+    }
+    .industry-tag:hover {
+      border-color: var(--blue);
+      color: var(--blue);
+    }
+
+    .brief-card {
+      background: var(--white);
+      border: 1px solid var(--gray-200);
+      border-radius: var(--radius-lg);
+      padding: 24px 28px;
+      box-shadow: var(--shadow-card);
+    }
+    .brief-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 18px;
+      padding-bottom: 12px;
+      border-bottom: 1px solid var(--gray-100);
+    }
+    .brief-title {
+      font-size: 11px;
+      font-weight: 600;
+      letter-spacing: 0.08em;
+      color: var(--gray-400);
+      text-transform: uppercase;
+    }
+    .active-badge {
+      font-size: 11px;
+      font-weight: 600;
+      color: var(--blue);
+      background: var(--blue-dim);
+      padding: 3px 12px;
+      border-radius: 999px;
+    }
+    .brief-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+      margin-bottom: 16px;
+    }
+    .brief-cell {
+      border: 1px solid var(--gray-100);
+      border-radius: var(--radius-sm);
+      padding: 12px 14px;
+      background: var(--gray-50);
+    }
+    .brief-cell-label {
+      font-size: 10px;
+      font-weight: 600;
+      letter-spacing: 0.1em;
+      color: var(--gray-400);
+      text-transform: uppercase;
+      margin-bottom: 2px;
+    }
+    .brief-cell-val {
+      font-size: 18px;
+      font-weight: 800;
+      color: var(--black);
+      letter-spacing: -0.02em;
+    }
+
+    .targeting-graph {
+      border: 1px solid var(--gray-100);
+      border-radius: var(--radius-sm);
+      background: var(--gray-50);
+      padding: 14px;
+    }
+    .graph-header {
+      display: flex;
+      justify-content: space-between;
+      font-size: 11px;
+      color: var(--gray-400);
+      margin-bottom: 10px;
+      font-weight: 500;
+    }
+    .graph-header .matches {
+      font-weight: 600;
+      color: var(--gray-700);
+    }
+    .graph-svg {
+      width: 100%;
+      height: 80px;
+    }
+    .graph-labels {
+      display: flex;
+      justify-content: space-between;
+      font-size: 10px;
+      color: var(--gray-400);
+      margin-top: 6px;
+      font-weight: 500;
+      letter-spacing: 0.02em;
+    }
+
+    /* ── Deliverables ── */
+    .deliverables-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      border: 1px solid var(--gray-200);
+      border-radius: var(--radius-lg);
+      overflow: hidden;
+      margin-top: 48px;
+      background: var(--white);
+    }
+    .deliverable-item {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 18px 20px;
+      border-right: 1px solid var(--gray-100);
+      border-bottom: 1px solid var(--gray-100);
+      font-size: 14px;
+      font-weight: 500;
+      color: var(--gray-800);
+      transition: background 0.2s;
+      background: var(--white);
+    }
+    .deliverable-item:hover {
+      background: var(--gray-50);
+    }
+    .deliverable-item:nth-child(4n) {
+      border-right: none;
+    }
+    .deliverable-item:nth-last-child(-n+4) {
+      border-bottom: none;
+    }
+    .deliverable-icon {
+      width: 32px;
+      height: 32px;
+      border-radius: var(--radius-sm);
+      border: 1px solid var(--gray-200);
+      background: var(--white);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 14px;
+      flex-shrink: 0;
+      color: var(--gray-600);
+    }
+
+    /* ── Steps ── */
+    .steps-row {
+      display: grid;
+      grid-template-columns: repeat(5, 1fr);
+      gap: 0;
+      margin-top: 56px;
+      position: relative;
+    }
+    .steps-row::before {
+      content: '';
+      position: absolute;
+      top: 36px;
+      left: calc(10% + 20px);
+      right: calc(10% + 20px);
+      height: 1px;
+      background: var(--gray-200);
+      z-index: 0;
+    }
+    .step-item {
+      display: flex;
+      flex-direction: column;
+      align-items: flex-start;
+      padding: 0 12px;
+      position: relative;
+      z-index: 1;
+    }
+    .step-icon-wrap {
+      width: 72px;
+      height: 72px;
+      border-radius: var(--radius);
+      border: 1px solid var(--gray-200);
+      background: var(--white);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 24px;
+      color: var(--gray-700);
+      margin-bottom: 20px;
+      box-shadow: 0 1px 4px rgba(0, 0, 0, 0.04);
+    }
+    .step-num {
+      font-size: 10px;
+      font-weight: 700;
+      letter-spacing: 0.12em;
+      color: var(--blue);
+      text-transform: uppercase;
+      margin-bottom: 4px;
+    }
+    .step-title {
+      font-size: 15px;
+      font-weight: 700;
+      color: var(--black);
+      margin-bottom: 6px;
+      line-height: 1.3;
+    }
+    .step-desc {
+      font-size: 13px;
+      color: var(--gray-500);
+      line-height: 1.55;
+    }
+
+    /* ── Compare ── */
+    .compare-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 24px;
+      margin-top: 48px;
+    }
+    .compare-card {
+      border-radius: var(--radius-lg);
+      padding: 32px;
+      border: 1px solid var(--gray-200);
+      background: var(--white);
+      transition: transform 0.25s, box-shadow 0.25s;
+    }
+    .compare-card:hover {
+      transform: translateY(-2px);
+      box-shadow: var(--shadow-card);
+    }
+    .compare-card.dark {
+      background: var(--dark-card);
+      border-color: transparent;
+    }
+    .compare-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 20px;
+      padding-bottom: 14px;
+      border-bottom: 1px solid var(--gray-100);
+    }
+    .compare-header.dark-border {
+      border-bottom-color: rgba(255, 255, 255, 0.06);
+    }
+    .compare-title {
+      font-size: 15px;
+      font-weight: 700;
+    }
+    .compare-title.dark {
+      color: var(--white);
+    }
+    .compare-list {
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+    }
+    .compare-row {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-size: 14px;
+      font-weight: 500;
+      color: var(--gray-600);
+    }
+    .compare-row.dark {
+      color: rgba(255, 255, 255, 0.7);
+    }
+    .compare-x {
+      width: 20px;
+      height: 20px;
+      border-radius: 50%;
+      border: 1.5px solid var(--gray-300);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+      font-size: 10px;
+      color: var(--gray-400);
+    }
+    .compare-check {
+      width: 20px;
+      height: 20px;
+      border-radius: 50%;
+      background: rgba(37, 99, 235, 0.15);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+      font-size: 10px;
+      color: var(--blue-light);
+    }
+
+    /* ── Stats ── */
+    .stats-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      border: 1px solid var(--gray-200);
+      border-radius: var(--radius-lg);
+      overflow: hidden;
+      margin-top: 48px;
+      background: var(--white);
+    }
+    .stat-cell {
+      padding: 40px 32px;
+      border-right: 1px solid var(--gray-100);
+    }
+    .stat-cell:last-child {
+      border-right: none;
+    }
+    .stat-num {
+      font-size: clamp(36px, 5vw, 52px);
+      font-weight: 900;
+      color: var(--black);
+      letter-spacing: -0.04em;
+      line-height: 1;
+      margin-bottom: 10px;
+    }
+    .stat-desc {
+      font-size: 14px;
+      color: var(--gray-500);
+      line-height: 1.5;
+      font-weight: 400;
+    }
+
+    /* ── Case Study ── */
+    .cs-card {
+      border: 1px solid var(--gray-200);
+      border-radius: var(--radius-lg);
+      overflow: hidden;
+      margin-top: 48px;
+      background: var(--white);
+    }
+    .cs-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+    }
+    .cs-left,
+    .cs-right {
+      padding: 36px;
+    }
+    .cs-left {
+      border-right: 1px solid var(--gray-100);
+    }
+    .cs-label {
+      font-size: 10px;
+      font-weight: 700;
+      letter-spacing: 0.12em;
+      color: var(--gray-400);
+      text-transform: uppercase;
+      margin-bottom: 20px;
+    }
+    .cs-label.blue {
+      color: var(--blue);
+    }
+    .cs-req-rows {
+      display: flex;
+      flex-direction: column;
+    }
+    .cs-req-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 14px 0;
+      border-bottom: 1px solid var(--gray-100);
+      font-size: 14px;
+    }
+    .cs-req-row:last-child {
+      border-bottom: none;
+    }
+    .cs-req-key {
+      color: var(--gray-500);
+      font-weight: 400;
+    }
+    .cs-req-val {
+      color: var(--black);
+      font-weight: 600;
+    }
+    .cs-results {
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+    .cs-result-row {
+      display: flex;
+      align-items: baseline;
+      gap: 14px;
+    }
+    .cs-result-num {
+      font-size: clamp(28px, 4vw, 44px);
+      font-weight: 900;
+      color: var(--black);
+      letter-spacing: -0.04em;
+      line-height: 1;
+      min-width: 110px;
+    }
+    .cs-result-label {
+      font-size: 14px;
+      color: var(--gray-500);
+      font-weight: 400;
+      line-height: 1.4;
+    }
+    .cs-footer {
+      padding: 14px 36px;
+      background: var(--gray-50);
+      border-top: 1px solid var(--gray-100);
+      font-size: 12px;
+      color: var(--gray-400);
+      font-family: 'SF Mono', 'Fira Code', monospace;
+    }
+
+    /* ── VSL ── */
+    .vsl-container {
+      margin-top: 48px;
+      border-radius: var(--radius-lg);
+      overflow: hidden;
+      background: var(--dark-card);
+      border: 1px solid var(--gray-200);
+      box-shadow: var(--shadow-lg);
+      aspect-ratio: 16 / 9;
+      position: relative;
+      cursor: pointer;
+      transition: transform 0.25s;
+    }
+    .vsl-container:hover {
+      transform: scale(1.01);
+    }
+    .vsl-placeholder {
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(135deg, #0f1117 0%, #0a0f1e 50%, #0d1124 100%);
+    }
+    .vsl-grid-overlay {
+      position: absolute;
+      inset: 0;
+      background-image: linear-gradient(to right, rgba(255, 255, 255, 0.04) 1px, transparent 1px),
+        linear-gradient(to bottom, rgba(255, 255, 255, 0.04) 1px, transparent 1px);
+      background-size: 48px 48px;
+    }
+    .vsl-glow {
+      position: absolute;
+      width: 400px;
+      height: 400px;
+      border-radius: 50%;
+      background: radial-gradient(circle, rgba(37, 99, 235, 0.2) 0%, transparent 70%);
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+    }
+    .vsl-play-btn {
+      position: relative;
+      z-index: 2;
+      width: 80px;
+      height: 80px;
+      background: rgba(255, 255, 255, 0.95);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: transform 0.25s, background 0.25s;
+      box-shadow: 0 4px 24px rgba(0, 0, 0, 0.3);
+    }
+    .vsl-container:hover .vsl-play-btn {
+      transform: scale(1.08);
+      background: var(--white);
+    }
+    .vsl-play-icon {
+      width: 0;
+      height: 0;
+      border-top: 14px solid transparent;
+      border-bottom: 14px solid transparent;
+      border-left: 22px solid var(--black);
+      margin-left: 4px;
+    }
+    .vsl-label {
+      position: absolute;
+      bottom: 24px;
+      left: 50%;
+      transform: translateX(-50%);
+      font-size: 12px;
+      color: rgba(255, 255, 255, 0.4);
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      font-weight: 600;
+      white-space: nowrap;
+      z-index: 2;
+    }
+    .vsl-duration {
+      position: absolute;
+      top: 20px;
+      right: 20px;
+      font-size: 11px;
+      color: rgba(255, 255, 255, 0.5);
+      font-family: 'SF Mono', 'Fira Code', monospace;
+      background: rgba(255, 255, 255, 0.08);
+      padding: 4px 12px;
+      border-radius: 999px;
+      z-index: 2;
+    }
+
+    /* ── Guarantee ── */
+    .guarantee-card {
+      display: grid;
+      grid-template-columns: auto 1fr;
+      gap: 48px;
+      align-items: center;
+      border: 1px solid var(--gray-200);
+      border-radius: var(--radius-lg);
+      padding: 48px 56px;
+      margin-top: 48px;
+      background: var(--white);
+      box-shadow: var(--shadow-card);
+    }
+    .shield-svg {
+      flex-shrink: 0;
+    }
+    .guarantee-title {
+      font-size: 24px;
+      font-weight: 800;
+      color: var(--black);
+      margin-bottom: 8px;
+      letter-spacing: -0.02em;
+    }
+    .guarantee-body {
+      font-size: 16px;
+      color: var(--gray-500);
+      line-height: 1.7;
+      max-width: 600px;
+    }
+
+    /* ── Testimonials ── */
+    .testi-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 24px;
+      margin-top: 48px;
+    }
+    .testi-card {
+      background: var(--white);
+      border: 1px solid var(--gray-200);
+      border-radius: var(--radius-lg);
+      padding: 28px;
+      transition: transform 0.25s, box-shadow 0.25s;
+    }
+    .testi-card:hover {
+      transform: translateY(-4px);
+      box-shadow: var(--shadow-card);
+    }
+    .testi-quote {
+      font-size: 15px;
+      color: var(--gray-700);
+      line-height: 1.65;
+      margin-bottom: 24px;
+      font-weight: 400;
+    }
+    .testi-author {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+    .testi-avatar {
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 14px;
+      font-weight: 700;
+      flex-shrink: 0;
+    }
+    .testi-name {
+      font-size: 14px;
+      font-weight: 700;
+      color: var(--black);
+      line-height: 1.2;
+    }
+    .testi-role {
+      font-size: 12px;
+      color: var(--gray-400);
+      font-weight: 400;
+    }
+
+    /* ── CTA Dark Block ── */
+    .cta-dark-block {
+      margin: 0 24px;
+      border-radius: var(--radius-lg);
+      background: var(--dark-card);
+      padding: 100px 60px;
+      text-align: center;
+      position: relative;
+      overflow: hidden;
+    }
+    .cta-grid-bg {
+      position: absolute;
+      inset: 0;
+      background-image: linear-gradient(to right, rgba(255, 255, 255, 0.03) 1px, transparent 1px),
+        linear-gradient(to bottom, rgba(255, 255, 255, 0.03) 1px, transparent 1px);
+      background-size: 48px 48px;
+    }
+    .cta-glow-left,
+    .cta-glow-right {
+      position: absolute;
+      width: 600px;
+      height: 600px;
+      border-radius: 50%;
+      top: 50%;
+      transform: translateY(-50%);
+    }
+    .cta-glow-left {
+      left: -100px;
+      background: radial-gradient(circle, rgba(37, 99, 235, 0.18) 0%, transparent 70%);
+    }
+    .cta-glow-right {
+      right: -100px;
+      background: radial-gradient(circle, rgba(37, 99, 235, 0.12) 0%, transparent 70%);
+    }
+    .cta-content {
+      position: relative;
+      z-index: 1;
+    }
+    .cta-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      background: rgba(255, 255, 255, 0.08);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      border-radius: 999px;
+      padding: 6px 16px;
+      font-size: 11px;
+      font-weight: 600;
+      letter-spacing: 0.1em;
+      color: rgba(255, 255, 255, 0.5);
+      text-transform: uppercase;
+      margin-bottom: 32px;
+    }
+    .cta-badge-dot {
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background: var(--blue);
+    }
+    .cta-headline {
+      font-size: clamp(36px, 5.5vw, 68px);
+      font-weight: 900;
+      color: var(--white);
+      letter-spacing: -0.03em;
+      line-height: 1.06;
+      margin-bottom: 16px;
+    }
+    .cta-headline .dim {
+      color: rgba(255, 255, 255, 0.3);
+    }
+    .cta-sub {
+      font-size: 16px;
+      color: rgba(255, 255, 255, 0.45);
+      margin-bottom: 40px;
+      line-height: 1.6;
+    }
+    .cta-small {
+      font-size: 11px;
+      color: rgba(255, 255, 255, 0.25);
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      margin-top: 20px;
+    }
+
+    /* ── Footer ── */
+    footer {
+      padding: 60px 24px 40px;
+      border-top: 1px solid var(--gray-100);
+    }
+    .footer-inner {
+      max-width: 1200px;
+      margin: 0 auto;
+      display: grid;
+      grid-template-columns: 1fr auto;
+      gap: 60px;
+      align-items: start;
+      margin-bottom: 48px;
+    }
+    .footer-logo {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-size: 14px;
+      font-weight: 700;
+      letter-spacing: 0.08em;
+      text-decoration: none;
+      color: var(--black);
+      margin-bottom: 6px;
+    }
+    .footer-tagline {
+      font-size: 13px;
+      color: var(--gray-400);
+      font-weight: 400;
+    }
+    .footer-links {
+      display: flex;
+      gap: 32px;
+      align-items: flex-start;
+      flex-wrap: wrap;
+    }
+    .footer-link {
+      font-size: 14px;
+      font-weight: 500;
+      color: var(--gray-500);
+      text-decoration: none;
+      transition: color 0.2s;
+    }
+    .footer-link:hover {
+      color: var(--black);
+    }
+    .footer-link.cta-link {
+      color: var(--blue);
+      font-weight: 600;
+    }
+    .footer-bottom {
+      max-width: 1200px;
+      margin: 0 auto;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding-top: 24px;
+      border-top: 1px solid var(--gray-100);
+      font-size: 12px;
+      color: var(--gray-400);
+    }
+
+    /* ── Scroll Reveal ── */
+    .reveal {
+      opacity: 0;
+      transform: translateY(30px);
+      transition: opacity 0.7s cubic-bezier(0.22, 1, 0.36, 1), transform 0.7s cubic-bezier(0.22, 1, 0.36, 1);
+    }
+    .reveal.visible {
+      opacity: 1;
+      transform: translateY(0);
+    }
+    .reveal-d1 {
+      transition-delay: 0.1s;
+    }
+    .reveal-d2 {
+      transition-delay: 0.2s;
+    }
+    .reveal-d3 {
+      transition-delay: 0.3s;
+    }
+    .reveal-d4 {
+      transition-delay: 0.4s;
+    }
+
+    /* ── Responsive ── */
+    @media (max-width: 1024px) {
+      .hero-grid {
+        gap: 40px;
+      }
+      .whatwedo-grid {
+        gap: 40px;
+      }
+    }
+
+    @media (max-width: 820px) {
+      nav {
+        padding: 0 20px;
+        height: 64px;
+      }
+      .nav-links,
+      .nav-cta {
+        display: none;
+      }
+      .mobile-toggle {
+        display: block;
+      }
+      .hero {
+        padding: 120px 0 60px;
+      }
+      .hero-grid {
+        grid-template-columns: 1fr;
+        gap: 48px;
+      }
+      .hero-headline {
+        font-size: clamp(36px, 10vw, 52px);
+      }
+      .problem-grid {
+        grid-template-columns: 1fr;
+      }
+      .whatwedo-grid {
+        grid-template-columns: 1fr;
+        gap: 32px;
+      }
+      .deliverables-grid {
+        grid-template-columns: repeat(2, 1fr);
+      }
+      .deliverable-item:nth-child(4n) {
+        border-right: 1px solid var(--gray-100);
+      }
+      .deliverable-item:nth-child(2n) {
+        border-right: none;
+      }
+      .deliverable-item:nth-last-child(-n+4) {
+        border-bottom: 1px solid var(--gray-100);
+      }
+      .deliverable-item:nth-last-child(-n+2) {
+        border-bottom: none;
+      }
+      .steps-row {
+        grid-template-columns: 1fr 1fr;
+        gap: 24px;
+      }
+      .steps-row::before {
+        display: none;
+      }
+      .compare-grid {
+        grid-template-columns: 1fr;
+      }
+      .stats-grid {
+        grid-template-columns: repeat(2, 1fr);
+      }
+      .stat-cell:nth-child(2n) {
+        border-right: none;
+      }
+      .cs-grid {
+        grid-template-columns: 1fr;
+      }
+      .cs-left {
+        border-right: none;
+        border-bottom: 1px solid var(--gray-100);
+      }
+      .testi-grid {
+        grid-template-columns: 1fr 1fr;
+      }
+      .guarantee-card {
+        grid-template-columns: 1fr;
+        text-align: center;
+        padding: 36px 28px;
+        gap: 28px;
+      }
+      .shield-svg {
+        margin: 0 auto;
+      }
+      .cta-dark-block {
+        margin: 0 16px;
+        padding: 60px 28px;
+      }
+      .cta-headline {
+        font-size: clamp(32px, 8vw, 48px);
+      }
+      .proof-inner {
+        flex-direction: column;
+        gap: 4px;
+      }
+      .proof-item {
+        border-right: none;
+        border-bottom: 1px solid var(--gray-200);
+        width: 100%;
+        justify-content: center;
+        padding: 8px 16px;
+      }
+      .proof-item:last-child {
+        border-bottom: none;
+      }
+      .footer-inner {
+        grid-template-columns: 1fr;
+        gap: 32px;
+      }
+      .footer-links {
+        gap: 20px;
+      }
+      .footer-bottom {
+        flex-direction: column;
+        gap: 8px;
+        text-align: center;
+      }
+      .brief-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    @media (max-width: 500px) {
+      .deliverables-grid {
+        grid-template-columns: 1fr;
+      }
+      .deliverable-item {
+        border-right: none;
+        border-bottom: 1px solid var(--gray-100);
+      }
+      .deliverable-item:last-child {
+        border-bottom: none;
+      }
+      .steps-row {
+        grid-template-columns: 1fr;
+        gap: 16px;
+      }
+      .stats-grid {
+        grid-template-columns: 1fr 1fr;
+      }
+      .testi-grid {
+        grid-template-columns: 1fr;
+      }
+      .cs-left,
+      .cs-right {
+        padding: 24px;
+      }
+      .cs-result-row {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 4px;
+      }
+      .cs-result-num {
+        min-width: auto;
+      }
+      .pipeline-tabs {
+        gap: 4px;
+      }
+      .pipeline-tab {
+        min-width: 50px;
+        padding: 6px 8px 10px;
+      }
+      .tab-label {
+        font-size: 8px;
+      }
+      .tab-icon {
+        width: 26px;
+        height: 26px;
+        font-size: 12px;
+      }
+      .hero-card {
+        padding: 16px;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- ─── NAVBAR ─── -->
+  <nav id="navbar">
+    <a href="#" class="nav-logo">
+      <span class="nav-logo-icon">S</span>
+      SCALVORA
+    </a>
+    <ul class="nav-links">
+      <li><a href="#how-it-works">How It Works</a></li>
+      <li><a href="#why-scalvora">Why Scalvora</a></li>
+      <li><a href="#results">Results</a></li>
+      <li><a href="#book">Book A Call</a></li>
+    </ul>
+    <a href="#book" class="nav-cta">Book A Strategy Call →</a>
+    <button class="mobile-toggle" id="menuToggle" aria-label="Open menu">
+      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/>
+      </svg>
+    </button>
+  </nav>
+
+  <!-- Mobile Menu Overlay & Drawer -->
+  <div class="mobile-menu-overlay" id="mobileOverlay"></div>
+  <div class="mobile-menu" id="mobileMenu">
+    <button class="close-btn" id="closeMenu">✕</button>
+    <a href="#how-it-works">How It Works</a>
+    <a href="#why-scalvora">Why Scalvora</a>
+    <a href="#results">Results</a>
+    <a href="#book" class="nav-cta-mobile">Book A Strategy Call →</a>
+  </div>
+
+  <!-- ─── HERO ─── -->
+  <section class="hero">
+    <div class="grid-bg"></div>
+    <div class="container hero-grid">
+      <div class="reveal">
+        <div class="label-sm"><span class="dot"></span>Publisher Acquisition Infrastructure</div>
+        <h1 class="heading-xl">The Publisher Acquisition Engine Behind Modern SEO Agencies.</h1>
+        <p class="sub-text" style="margin: 20px 0 16px;">We source, qualify and onboard publishers directly into your CRM—so your team can focus on placements, not prospecting.</p>
+        <div class="hero-values">
+          <span><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg> Direct publisher relationships</span>
+          <span><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg> No inventories</span>
+          <span><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg> No markups</span>
+        </div>
+        <div class="hero-btns" style="display:flex; gap:12px; flex-wrap:wrap;">
+          <a href="#book" class="btn btn-primary">Book A Strategy Call →</a>
+          <a href="#how-it-works" class="btn btn-outline">See How It Works</a>
+        </div>
+      </div>
+
+      <div class="reveal reveal-d2">
+        <div class="hero-card">
+          <div class="hero-card-header">
+            <span class="hero-card-title">scalvora.pipeline / live</span>
+            <span class="hero-card-status"><span class="status-dot"></span> syncing</span>
+          </div>
+          <div class="pipeline-tabs" id="pipelineTabs">
+            <div class="pipeline-tab" data-tab="requirements"><div class="tab-icon">📋</div><span class="tab-label">Requirements</span></div>
+            <div class="pipeline-tab" data-tab="outreach"><div class="tab-icon">✉️</div><span class="tab-label">Outreach</span></div>
+            <div class="pipeline-tab" data-tab="conversations"><div class="tab-icon">💬</div><span class="tab-label">Conversations</span></div>
+            <div class="pipeline-tab active" data-tab="qualified"><div class="tab-icon">✓</div><span class="tab-label">Qualified</span></div>
+            <div class="pipeline-tab" data-tab="crm"><div class="tab-icon">📥</div><span class="tab-label">Client CRM</span></div>
+          </div>
+          <div class="publisher-rows">
+            <div class="publisher-row"><div class="pub-left"><div class="pub-globe">🌐</div><span class="pub-name">techcrunch-style.io</span></div><div class="pub-right"><span class="pub-dr">DR 72</span><span class="pub-badge">qualified</span></div></div>
+            <div class="publisher-row"><div class="pub-left"><div class="pub-globe">🌐</div><span class="pub-name">saasreview.co</span></div><div class="pub-right"><span class="pub-dr">DR 64</span><span class="pub-badge">qualified</span></div></div>
+            <div class="publisher-row"><div class="pub-left"><div class="pub-globe">🌐</div><span class="pub-name">fintechdaily.com</span></div><div class="pub-right"><span class="pub-dr">DR 58</span><span class="pub-badge">qualified</span></div></div>
+            <div class="publisher-row"><div class="pub-left"><div class="pub-globe">🌐</div><span class="pub-name">devweekly.dev</span></div><div class="pub-right"><span class="pub-dr">DR 51</span><span class="pub-badge">qualified</span></div></div>
+          </div>
+          <div class="hero-card-footer">
+            <span>This week</span>
+            <span><span class="footer-stat">128 publishers</span> → your CRM</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ─── PROOF BAR ─── -->
+  <div class="proof-bar">
+    <div class="proof-inner">
+      <div class="proof-item"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#2563eb" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg> 500+ <span>Publisher Conversations Monthly</span></div>
+      <div class="proof-item"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#2563eb" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg> 20+ <span>Industries Covered</span></div>
+      <div class="proof-item"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#2563eb" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg> US · UK · Canada · Australia</div>
+      <div class="proof-item"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#2563eb" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg> Direct Publisher Pricing</div>
+    </div>
+  </div>
+
+  <!-- ─── PROBLEM ─── -->
+  <section class="section-dark" id="problem">
+    <div class="container">
+      <div class="label-sm reveal"><span class="dot"></span>The Bottleneck</div>
+      <h2 class="heading-lg reveal" style="max-width:700px;">Most agencies spend more time finding publishers than <span class="dim">building links.</span></h2>
+      <p class="sub-text reveal" style="margin: 12px 0 40px;">Before a link goes live, agencies burn countless hours on operational work that doesn't move client metrics.</p>
+      <div class="problem-grid">
+        <div class="problem-card reveal reveal-d1">
+          <div class="card-header">
+            <span class="card-label">BEFOR · INTERNAL WORKFLOW</span>
+            <span style="color:var(--gray-300); font-size:16px;">✕</span>
+          </div>
+          <div class="workflow-rows">
+            <div class="workflow-row"><span><span class="dot">●</span> Finding relevant websites</span><span class="tag">manual</span></div>
+            <div class="workflow-row"><span><span class="dot">●</span> Researching contacts</span><span class="tag">manual</span></div>
+            <div class="workflow-row"><span><span class="dot">●</span> Sending outreach</span><span class="tag">manual</span></div>
+            <div class="workflow-row"><span><span class="dot">●</span> Following up</span><span class="tag">manual</span></div>
+            <div class="workflow-row"><span><span class="dot">●</span> Negotiating pricing</span><span class="tag">manual</span></div>
+            <div class="workflow-row"><span><span class="dot">●</span> Managing relationships</span><span class="tag">manual</span></div>
+          </div>
+        </div>
+        <div class="problem-card dark reveal reveal-d2">
+          <div class="card-header dark-border">
+            <span class="card-label dark">WITH SCALVORA</span>
+            <span style="color:var(--blue-light); font-size:18px;">⚡</span>
+          </div>
+          <div class="scalvora-flow">
+            <div class="flow-step you"><span>You:</span> <strong>share weekly requirements</strong></div>
+            <div style="color:rgba(255,255,255,0.12); font-size:12px; padding:0 18px;">↓</div>
+            <div class="flow-step scal"><span>Scalvora:</span> <strong>sources, outreaches, qualifies</strong></div>
+            <div style="color:rgba(255,255,255,0.12); font-size:12px; padding:0 18px;">↓</div>
+            <div class="flow-step result">Qualified publishers → your CRM</div>
+          </div>
+          <p class="flow-footer">Scalvora removes the operational bottleneck. Your team spends time placing, not prospecting.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ─── WHAT WE DO ─── -->
+  <section id="how-it-works">
+    <div class="container">
+      <div class="whatwedo-grid">
+        <div>
+          <div class="label-sm reveal"><span class="dot"></span>What We Do</div>
+          <h2 class="heading-lg reveal">We don't sell links. We build <span class="blue">publisher pipelines.</span></h2>
+          <p class="sub-text reveal" style="margin: 12px 0 24px;">Every week your team provides exact requirements—DR range, traffic, country, industry. We identify highly relevant websites, SaaS companies, media sites, blogs and businesses matching those criteria.</p>
+          <div class="industry-tags reveal">
+            <span class="industry-tag">SaaS</span>
+            <span class="industry-tag">Finance</span>
+            <span class="industry-tag">Legal</span>
+            <span class="industry-tag">Technology</span>
+            <span class="industry-tag">Healthcare</span>
+            <span class="industry-tag">Local SEO</span>
+            <span class="industry-tag">B2B</span>
+          </div>
+          <p class="reveal" style="font-size:15px;color:var(--gray-500);line-height:1.7;">We initiate personalized outreach, qualify opportunities, collect publisher information and deliver everything directly into your CRM.</p>
+        </div>
+        <div class="reveal reveal-d2">
+          <div class="brief-card">
+            <div class="brief-header">
+              <span class="brief-title">BRIEF · WEEK 14</span>
+              <span class="active-badge">active</span>
+            </div>
+            <div class="brief-grid">
+              <div class="brief-cell"><div class="brief-cell-label">DR RANGE</div><div class="brief-cell-val">40 – 90</div></div>
+              <div class="brief-cell"><div class="brief-cell-label">TRAFFIC</div><div class="brief-cell-val">10k – 500k</div></div>
+              <div class="brief-cell"><div class="brief-cell-label">COUNTRY</div><div class="brief-cell-val" style="font-size:15px;">US / UK / CA</div></div>
+              <div class="brief-cell"><div class="brief-cell-label">INDUSTRY</div><div class="brief-cell-val" style="font-size:15px;">SaaS · FinTech</div></div>
+            </div>
+            <div class="targeting-graph">
+              <div class="graph-header"><span>Targeting graph</span><span class="matches">2,418 matches</span></div>
+              <svg class="graph-svg" viewBox="0 0 280 80" xmlns="http://www.w3.org/2000/svg">
+                <circle cx="20" cy="15" r="4" fill="#0a0a0a"/>
+                <circle cx="20" cy="32" r="4" fill="#0a0a0a"/>
+                <circle cx="20" cy="50" r="4" fill="#0a0a0a"/>
+                <circle cx="20" cy="67" r="4" fill="#0a0a0a"/>
+                <circle cx="140" cy="12" r="4" fill="#0a0a0a"/>
+                <circle cx="140" cy="28" r="4" fill="#0a0a0a"/>
+                <circle cx="140" cy="45" r="4" fill="#0a0a0a"/>
+                <circle cx="140" cy="60" r="4" fill="#0a0a0a"/>
+                <circle cx="140" cy="75" r="4" fill="#0a0a0a"/>
+                <circle cx="260" cy="18" r="4" fill="#2563eb"/>
+                <circle cx="260" cy="35" r="4" fill="#2563eb"/>
+                <circle cx="260" cy="52" r="4" fill="#2563eb"/>
+                <circle cx="260" cy="68" r="4" fill="#2563eb"/>
+                <line x1="24" y1="15" x2="136" y2="12" stroke="#b0c4e8" stroke-width="1" opacity="0.6"/>
+                <line x1="24" y1="15" x2="136" y2="45" stroke="#b0c4e8" stroke-width="1" opacity="0.5"/>
+                <line x1="24" y1="32" x2="136" y2="28" stroke="#b0c4e8" stroke-width="1" opacity="0.6"/>
+                <line x1="24" y1="32" x2="136" y2="60" stroke="#b0c4e8" stroke-width="1" opacity="0.4"/>
+                <line x1="24" y1="50" x2="136" y2="45" stroke="#b0c4e8" stroke-width="1" opacity="0.5"/>
+                <line x1="24" y1="50" x2="136" y2="75" stroke="#b0c4e8" stroke-width="1" opacity="0.5"/>
+                <line x1="24" y1="67" x2="136" y2="60" stroke="#b0c4e8" stroke-width="1" opacity="0.5"/>
+                <line x1="144" y1="12" x2="256" y2="18" stroke="#93b4f0" stroke-width="1" opacity="0.7"/>
+                <line x1="144" y1="28" x2="256" y2="18" stroke="#93b4f0" stroke-width="1" opacity="0.5"/>
+                <line x1="144" y1="28" x2="256" y2="35" stroke="#93b4f0" stroke-width="1" opacity="0.6"/>
+                <line x1="144" y1="45" x2="256" y2="35" stroke="#93b4f0" stroke-width="1" opacity="0.5"/>
+                <line x1="144" y1="45" x2="256" y2="52" stroke="#93b4f0" stroke-width="1" opacity="0.6"/>
+                <line x1="144" y1="60" x2="256" y2="52" stroke="#93b4f0" stroke-width="1" opacity="0.5"/>
+                <line x1="144" y1="75" x2="256" y2="68" stroke="#93b4f0" stroke-width="1" opacity="0.6"/>
+              </svg>
+              <div class="graph-labels"><span>Requirements</span><span>Candidates</span><span>Outreach</span></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ─── DELIVERABLES ─── -->
+  <section class="section-dark">
+    <div class="container">
+      <div class="label-sm reveal"><span class="dot"></span>Deliverables</div>
+      <h2 class="heading-lg reveal">Every qualified publisher includes</h2>
+      <p class="sub-text reveal" style="margin: 12px 0 40px;">Each opportunity is enriched with the full context your team needs to place, negotiate and report.</p>
+      <div class="deliverables-grid reveal">
+        <div class="deliverable-item"><div class="deliverable-icon">🌐</div> Website</div>
+        <div class="deliverable-item"><div class="deliverable-icon">📈</div> Traffic Metrics</div>
+        <div class="deliverable-item"><div class="deliverable-icon">🛡</div> Authority Metrics</div>
+        <div class="deliverable-item"><div class="deliverable-icon">✉️</div> Publisher Contact</div>
+        <div class="deliverable-item"><div class="deliverable-icon">💬</div> Positive Response</div>
+        <div class="deliverable-item"><div class="deliverable-icon">🏷</div> Pricing Information</div>
+        <div class="deliverable-item"><div class="deliverable-icon">📝</div> Guest Post Availability</div>
+        <div class="deliverable-item"><div class="deliverable-icon">🔗</div> Link Insert Availability</div>
+        <div class="deliverable-item"><div class="deliverable-icon">📄</div> Publisher Notes</div>
+        <div class="deliverable-item"><div class="deliverable-icon">🌍</div> Country Data</div>
+        <div class="deliverable-item"><div class="deliverable-icon">🏢</div> Industry Relevance</div>
+        <div class="deliverable-item"><div class="deliverable-icon">🗂</div> Conversation History</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ─── PROCESS STEPS ─── -->
+  <section id="how-it-works-steps">
+    <div class="container">
+      <div class="label-sm reveal"><span class="dot"></span>Process</div>
+      <h2 class="heading-lg reveal">How Scalvora works</h2>
+      <div class="steps-row">
+        <div class="step-item reveal"><div class="step-icon-wrap">📋</div><div class="step-num">STEP 01</div><div class="step-title">Share Requirements</div><div class="step-desc">Tell us exactly what publishers you need.</div></div>
+        <div class="step-item reveal reveal-d1"><div class="step-icon-wrap">🎯</div><div class="step-num">STEP 02</div><div class="step-title">Target Identification</div><div class="step-desc">We identify relevant businesses, publishers and websites.</div></div>
+        <div class="step-item reveal reveal-d2"><div class="step-icon-wrap">✉️</div><div class="step-num">STEP 03</div><div class="step-title">Personalized Outreach</div><div class="step-desc">We initiate conversations with qualified prospects.</div></div>
+        <div class="step-item reveal reveal-d3"><div class="step-icon-wrap">✅</div><div class="step-num">STEP 04</div><div class="step-title">Publisher Qualification</div><div class="step-desc">We verify quality and collect pricing information.</div></div>
+        <div class="step-item reveal reveal-d4"><div class="step-icon-wrap">📥</div><div class="step-num">STEP 05</div><div class="step-title">CRM Delivery</div><div class="step-desc">Qualified opportunities are pushed directly into your CRM.</div></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ─── WHY SCALVORA ─── -->
+  <section class="section-dark" id="why-scalvora">
+    <div class="container">
+      <div class="label-sm reveal"><span class="dot"></span>Why Scalvora</div>
+      <h2 class="heading-lg reveal">Most agencies sell placements.<br><span class="dim">We build relationships.</span></h2>
+      <div class="compare-grid">
+        <div class="compare-card reveal reveal-d1">
+          <div class="compare-header">
+            <span class="compare-title">Traditional Link Vendors</span>
+            <span style="color:var(--gray-300); font-size:16px;">✕</span>
+          </div>
+          <div class="compare-list">
+            <div class="compare-row"><div class="compare-x">✕</div> Pre-built inventories</div>
+            <div class="compare-row"><div class="compare-x">✕</div> Marked-up pricing</div>
+            <div class="compare-row"><div class="compare-x">✕</div> Shared publisher lists</div>
+            <div class="compare-row"><div class="compare-x">✕</div> Limited transparency</div>
+            <div class="compare-row"><div class="compare-x">✕</div> Same websites sold repeatedly</div>
+          </div>
+        </div>
+        <div class="compare-card dark reveal reveal-d2">
+          <div class="compare-header dark-border">
+            <span class="compare-title dark">Scalvora</span>
+            <span style="color:var(--blue-light); font-size:18px;">⚡</span>
+          </div>
+          <div class="compare-list">
+            <div class="compare-row dark"><div class="compare-check">✓</div> On-demand sourcing</div>
+            <div class="compare-row dark"><div class="compare-check">✓</div> Direct publisher pricing</div>
+            <div class="compare-row dark"><div class="compare-check">✓</div> Fresh publisher relationships</div>
+            <div class="compare-row dark"><div class="compare-check">✓</div> Complete transparency</div>
+            <div class="compare-row dark"><div class="compare-check">✓</div> Publisher relationships belong to you</div>
+            <div class="compare-row dark"><div class="compare-check">✓</div> No inventory reselling</div>
+            <div class="compare-row dark"><div class="compare-check">✓</div> No hidden margins</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ─── RESULTS ─── -->
+  <section id="results">
+    <div class="container">
+      <div class="label-sm reveal"><span class="dot"></span>Results</div>
+      <h2 class="heading-lg reveal">Built for agencies that need scale</h2>
+      <p class="sub-text reveal" style="margin: 12px 0 40px;">Scalvora helps agencies expand fulfillment capacity without expanding outreach teams.</p>
+      <div class="stats-grid reveal" id="statsGrid">
+        <div class="stat-cell"><div class="stat-num" data-target="500+">500+</div><div class="stat-desc">Publisher conversations generated monthly</div></div>
+        <div class="stat-cell"><div class="stat-num" data-target="1,000s">1,000s</div><div class="stat-desc">Of publishers researched and qualified</div></div>
+        <div class="stat-cell"><div class="stat-num" data-target="20+">20+</div><div class="stat-desc">Industries covered</div></div>
+        <div class="stat-cell"><div class="stat-num" data-target="Global">Global</div><div class="stat-desc">Outreach capabilities</div></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ─── CASE STUDY ─── -->
+  <section class="section-dark">
+    <div class="container">
+      <div class="label-sm reveal"><span class="dot"></span>Case Study</div>
+      <h2 class="heading-lg reveal">Example campaign outcome</h2>
+      <div class="cs-card reveal">
+        <div class="cs-grid">
+          <div class="cs-left">
+            <div class="cs-label">Client Requirements</div>
+            <div class="cs-req-rows">
+              <div class="cs-req-row"><span class="cs-req-key">Niche</span><span class="cs-req-val">SaaS Publishers</span></div>
+              <div class="cs-req-row"><span class="cs-req-key">Authority</span><span class="cs-req-val">DR 40+</span></div>
+              <div class="cs-req-row"><span class="cs-req-key">Geography</span><span class="cs-req-val">US Traffic</span></div>
+              <div class="cs-req-row"><span class="cs-req-key">Industry</span><span class="cs-req-val">Technology</span></div>
+            </div>
+          </div>
+          <div class="cs-right">
+            <div class="cs-label blue">90-Day Outcome</div>
+            <div class="cs-results">
+              <div class="cs-result-row"><span class="cs-result-num">700</span><span class="cs-result-label">Qualified publishers added</span></div>
+              <div class="cs-result-row"><span class="cs-result-num">400+</span><span class="cs-result-label">Positive conversations</span></div>
+              <div class="cs-result-row"><span class="cs-result-num">150+</span><span class="cs-result-label">Pricing discussions</span></div>
+              <div class="cs-result-row"><span class="cs-result-num" style="font-size:28px;">Hundreds</span><span class="cs-result-label">Of placement opportunities created</span></div>
+            </div>
+          </div>
+        </div>
+        <div class="cs-footer">Disclaimer · Results vary by niche and campaign requirements.</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ─── VSL ─── -->
+  <section>
+    <div class="container" style="text-align:center;">
+      <div class="label-sm reveal" style="justify-content:center;"><span class="dot"></span>See It In Action</div>
+      <h2 class="heading-lg reveal" style="max-width:600px; margin:0 auto 16px;">Watch how Scalvora works for your agency</h2>
+      <p class="sub-text reveal" style="margin:0 auto 40px; max-width:480px;">A short walkthrough of how we build publisher pipelines — from brief to CRM delivery.</p>
+      <div class="vsl-container reveal" id="vslContainer">
+        <div class="vsl-placeholder"></div>
+        <div class="vsl-grid-overlay"></div>
+        <div class="vsl-glow"></div>
+        <div class="vsl-play-btn"><div class="vsl-play-icon"></div></div>
+        <div class="vsl-duration">8:24</div>
+        <div class="vsl-label">Watch overview · No signup required</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ─── GUARANTEE ─── -->
+  <section class="section-dark">
+    <div class="container">
+      <div class="label-sm reveal"><span class="dot"></span>Our Guarantee</div>
+      <h2 class="heading-lg reveal">Publisher Acquisition Guarantee</h2>
+      <div class="guarantee-card reveal">
+        <svg class="shield-svg" width="80" height="80" viewBox="0 0 80 80" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <path d="M40 6L12 18V38C12 54.569 24.477 69.814 40 74C55.523 69.814 68 54.569 68 38V18L40 6Z" fill="#f0f4ff" stroke="#2563eb" stroke-width="2"/>
+          <path d="M28 40L36 48L52 32" stroke="#2563eb" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+        <div>
+          <div class="guarantee-title">We define success before engagement begins.</div>
+          <p class="guarantee-body">If we fail to deliver the agreed number of qualified publisher opportunities matching your requirements, we continue working at no additional cost until the target is achieved.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ─── TESTIMONIALS ─── -->
+  <section>
+    <div class="container">
+      <div class="label-sm reveal"><span class="dot"></span>Testimonials</div>
+      <h2 class="heading-lg reveal">Trusted by growing SEO teams</h2>
+      <div class="testi-grid">
+        <div class="testi-card reveal"><p class="testi-quote">"Scalvora completely removed our prospecting bottleneck. We went from spending 60% of our time on outreach to almost zero. Our team now focuses entirely on placements."</p><div class="testi-author"><div class="testi-avatar" style="background:#e8f0fe;color:#2563eb;">JM</div><div><div class="testi-name">James Mitchell</div><div class="testi-role">Head of Link Building · ScaleRank</div></div></div></div>
+        <div class="testi-card reveal reveal-d1"><p class="testi-quote">"The publisher quality is genuinely excellent. Every contact they deliver has been pre-qualified, has responded positively, and includes pricing. It's exactly what we needed to scale."</p><div class="testi-author"><div class="testi-avatar" style="background:#fef3c7;color:#d97706;">SR</div><div><div class="testi-name">Sarah Reynolds</div><div class="testi-role">Operations Director · LinkForge</div></div></div></div>
+        <div class="testi-card reveal reveal-d2"><p class="testi-quote">"Our fulfillment capacity doubled without hiring anyone. The margins improved significantly because we're getting direct publisher pricing, not marked-up inventory rates."</p><div class="testi-author"><div class="testi-avatar" style="background:#d1fae5;color:#059669;">AC</div><div><div class="testi-name">Alex Chen</div><div class="testi-role">Founder · Velocity SEO</div></div></div></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ─── FINAL CTA ─── -->
+  <section id="book" style="padding: 60px 0 80px;">
+    <div class="cta-dark-block">
+      <div class="cta-grid-bg"></div>
+      <div class="cta-glow-left"></div>
+      <div class="cta-glow-right"></div>
+      <div class="cta-content">
+        <div class="cta-badge"><span class="cta-badge-dot"></span>Limited Intake</div>
+        <h2 class="cta-headline">Stop building outreach teams.<br><span class="dim">Start building publisher pipelines.</span></h2>
+        <p class="cta-sub">Let Scalvora become the publisher acquisition engine behind your agency.</p>
+        <a href="mailto:hello@scalvora.com" class="btn btn-white">Book A Strategy Call ↗</a>
+        <p class="cta-small">SEE IF SCALVORA IS A FIT · NO OBLIGATION · NO HARD PITCH</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ─── FOOTER ─── -->
+  <footer>
+    <div class="footer-inner">
+      <div>
+        <a href="#" class="footer-logo"><span class="nav-logo-icon">S</span> SCALVORA</a>
+        <p class="footer-tagline">Publisher Acquisition Infrastructure For SEO Agencies</p>
+      </div>
+      <div class="footer-links">
+        <a href="#how-it-works" class="footer-link">How It Works</a>
+        <a href="#why-scalvora" class="footer-link">Why Scalvora</a>
+        <a href="#results" class="footer-link">Results</a>
+        <a href="#" class="footer-link" target="_blank">LinkedIn ↗</a>
+        <a href="mailto:hello@scalvora.com" class="footer-link">Email</a>
+        <a href="#book" class="footer-link cta-link">Book A Call</a>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <span>© 2025 Scalvora. All rights reserved.</span>
+      <span>Publisher Acquisition Infrastructure</span>
+    </div>
+  </footer>
+
+  <script>
+    // ── Scroll reveal ──
+    const revealObserver = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          entry.target.classList.add('visible');
+        }
+      });
+    }, { threshold: 0.1, rootMargin: '0px 0px -40px 0px' });
+
+    document.querySelectorAll('.reveal').forEach(el => revealObserver.observe(el));
+
+    // ── Navbar scroll shadow ──
+    const nav = document.getElementById('navbar');
+    window.addEventListener('scroll', () => {
+      nav.classList.toggle('scrolled', window.scrollY > 20);
+    });
+
+    // ── Mobile menu ──
+    const menuToggle = document.getElementById('menuToggle');
+    const mobileMenu = document.getElementById('mobileMenu');
+    const mobileOverlay = document.getElementById('mobileOverlay');
+    const closeMenu = document.getElementById('closeMenu');
+
+    function openMenu() {
+      mobileMenu.classList.add('open');
+      mobileOverlay.classList.add('open');
+      document.body.style.overflow = 'hidden';
+    }
+    function closeMenuFn() {
+      mobileMenu.classList.remove('open');
+      mobileOverlay.classList.remove('open');
+      document.body.style.overflow = '';
+    }
+
+    menuToggle.addEventListener('click', openMenu);
+    closeMenu.addEventListener('click', closeMenuFn);
+    mobileOverlay.addEventListener('click', closeMenuFn);
+
+    // Close mobile menu on link click
+    mobileMenu.querySelectorAll('a').forEach(link => {
+      link.addEventListener('click', closeMenuFn);
+    });
+
+    // ── Pipeline tabs interactive ──
+    const tabs = document.querySelectorAll('.pipeline-tab');
+    tabs.forEach(tab => {
+      tab.addEventListener('click', function(e) {
+        tabs.forEach(t => t.classList.remove('active'));
+        this.classList.add('active');
+      });
+    });
+
+    // ── Counter animation ──
+    const statObserver = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          const nums = entry.target.querySelectorAll('.stat-num[data-target]');
+          nums.forEach(el => {
+            const target = el.getAttribute('data-target');
+            if (isNaN(parseInt(target.replace(/[^0-9]/g, '')))) return;
+            animateCounter(el, target);
+          });
+          statObserver.unobserve(entry.target);
+        }
+      });
+    }, { threshold: 0.3 });
+
+    document.querySelectorAll('.stats-grid').forEach(el => statObserver.observe(el));
+
+    function animateCounter(el, target) {
+      const num = parseInt(target.replace(/[^0-9]/g, ''));
+      let start = 0;
+      const duration = 1500;
+      const step = (timestamp) => {
+        if (!start) start = timestamp;
+        const progress = Math.min((timestamp - start) / duration, 1);
+        const eased = 1 - Math.pow(1 - progress, 3);
+        const current = Math.floor(eased * num);
+        let suffix = '';
+        if (target.includes('+')) suffix = '+';
+        if (target.includes(',')) {
+          el.textContent = current >= 1000 ? Math.floor(current / 1000) + ',000' + suffix : current + suffix;
+        } else {
+          el.textContent = current + suffix;
+        }
+        if (progress < 1) requestAnimationFrame(step);
+        else el.textContent = target;
+      };
+      requestAnimationFrame(step);
+    }
+
+    // ── VSL placeholder click ──
+    const vslContainer = document.getElementById('vslContainer');
+    if (vslContainer) {
+      vslContainer.addEventListener('click', function() {
+        // Replace with your actual video URL
+        this.innerHTML = `
+          <iframe width="100%" height="100%" src="https://www.youtube.com/embed/dQw4w9WgXcQ?autoplay=1" 
+            frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" 
+            allowfullscreen style="position:absolute;inset:0;border-radius:20px;border:0;"></iframe>
+        `;
+        this.style.padding = '0';
+        this.style.cursor = 'default';
+      });
+    }
+
+    // ── Smooth anchor scroll ──
+    document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+      anchor.addEventListener('click', function(e) {
+        const href = this.getAttribute('href');
+        if (href === '#') return;
+        const target = document.querySelector(href);
+        if (target) {
+          e.preventDefault();
+          const offset = 80;
+          const top = target.getBoundingClientRect().top + window.pageYOffset - offset;
+          window.scrollTo({ top, behavior: 'smooth' });
+        }
+      });
+    });
+  </script>
+</body>
+</html>
